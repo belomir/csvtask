@@ -1,12 +1,12 @@
 """csv employee mandays module"""
 
 
-from os import listdir
+from os import listdir, path
 import csv
 import sqlite3
 
 
-def exec(folder='data', database='data.db', projectField='Название проекта', managerField='Руководитель', dateField='Дата сдачи'):\
+def exec(folder='../../data', database='data.db', projectField='Название проекта', managerField='Руководитель', dateField='Дата сдачи'):
     """
     main function for script
 
@@ -21,10 +21,10 @@ def exec(folder='data', database='data.db', projectField='Название пр�
     :param dateField: project end's date fields in csv files
     :type dateField: str
     """
-
+    
     fields = [projectField, managerField, dateField] #: csv fields list
-
-    connection = sqlite3.connect(database)
+    
+    connection = sqlite3.connect(folder+'/'+database)
     cursor = connection.cursor()
     cursor.execute('create table if not exists employees (id text primary key)')
     connection.commit()
@@ -33,7 +33,7 @@ def exec(folder='data', database='data.db', projectField='Название пр�
     cursor.execute('create table if not exists mandays (project text not null, employee text not null, mandays integer, primary key(project, employee))')
     connection.commit()
 
-    dataFiles = listdir(folder)
+    dataFiles = [file for file in listdir(folder) if path.isfile(file)]
 
     for dataFile in dataFiles:
         with open('./{dir}/{file}'.format(dir=folder, file=dataFile), encoding='utf-8') as file:
